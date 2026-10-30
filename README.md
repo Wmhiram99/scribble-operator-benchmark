@@ -1,6 +1,18 @@
 # Scribble Operator Benchmark
 
-A research code bundle for the Class, Offset, Direction, Shrink, Random Drop, and Fragmentation scribble perturbation operators used with VOC2012 and Cityscapes.
+A research code bundle for six controlled scribble perturbation operators: Class, Offset, Direction, Shrink, Random Drop, and Fragmentation. The VOC-compatible operators are used with both manual VOC2012 scribbles and the automatically generated S4Pascal scribbles. The Cityscapes operators are intended for the automatically generated scribbles in S4Cityscapes.
+
+## Paper context and dataset scope
+
+This code accompanies the study *What Breaks Scribble-Supervised Segmentation? An Audit-Informed Benchmark for Scribble Annotation Robustness*. The study starts from an audit of 12,031 manually annotated VOC2012 scribble images and uses controlled perturbations to examine how changes to sparse training labels affect segmentation robustness. Class, Offset, and Direction operationalize patterns found in the audit. Shrink is motivated by prior scribble research. Random Drop and Fragmentation are included as diagnostic controls for distributed support removal and connectivity disruption. The four primary operators are Class, Offset, Direction, and Shrink; Random Drop and Fragmentation are secondary controls.
+
+The datasets in the study have distinct roles:
+
+- **Manual VOC2012** is the audit reference setting. Its images and dense semantic masks are from PASCAL VOC2012, paired with the study's manual scribbles.
+- **S4Pascal** uses Scribble4All automatically generated scribbles on the same PASCAL VOC images and dense masks as VOC2012. Therefore, the scripts under `operators/voc2012/` are also used for S4Pascal. They are grouped by label/data convention, not restricted to the manual annotation source.
+- **S4Cityscapes** uses Scribble4All automatically generated scribbles on Cityscapes images in a separate urban-scene domain. The scripts under `operators/cityscapes/` are for this S4Cityscapes setup and its prepared Cityscapes masks. They do not generate the Scribble4All annotations; they perturb existing, locally prepared scribble masks.
+
+The benchmark studies annotation robustness rather than proposing a segmentation architecture. Each operator has its own requested and achieved score definition, so nominal ratios should be interpreted within an operator. A change in the scribble is a controlled annotation intervention; downstream model response is measured separately by training and evaluating a segmentation pipeline. The repository contains operator code and documentation, not the full experimental logs or model results.
 
 ## Repository contents
 
@@ -17,13 +29,13 @@ The intended shareable contents are code, documentation, and a synthetic demonst
 
 Download the training/validation data and development kit from the [official VOC2012 page](https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2012/). The official development kit includes `JPEGImages`, `SegmentationClass`, and split lists under `VOCdevkit/VOC2012`. The VOC2012 test set does not provide public pixel-level segmentation labels.
 
-The automatic scribble annotations used in the experiments are not part of the official VOC download and are not included here. Obtain them from an authorized project source. Prepare the same image basenames in the ground-truth and scribble directories before running the scripts.
+The S4Pascal automatic scribble annotations used in the experiments are not part of the official VOC download and are not included here. Obtain the Scribble4All annotations from an authorized project source. S4Pascal uses the same underlying PASCAL VOC images and dense masks as the manual VOC2012 setting, but a different scribble source. Prepare the same image basenames in the ground-truth and scribble directories before running the VOC-compatible scripts for either annotation source.
 
 ### Cityscapes
 
 Create an account and download the needed image and fine-annotation packages from the [official Cityscapes portal](https://www.cityscapes-dataset.com/downloads/). Access requires registration and approval. Read the [current Cityscapes terms](https://www.cityscapes-dataset.com/license/) before downloading or using the data. The terms prohibit redistribution of the dataset and modified versions. Do not place Cityscapes images, masks, scribbles, or recoverable derivatives in this repository or another shared location unless the proposed sharing is explicitly permitted.
 
-The official package uses nested city directories such as `leftImg8bit/train/<city>/` and `gtFine/train/<city>/`. The experiment scripts do not all consume this raw layout directly. Prepare the paired, same-name PNG masks expected by the selected script, and check its label encoding before running it.
+The official package uses nested city directories such as `leftImg8bit/train/<city>/` and `gtFine/train/<city>/`. S4Cityscapes pairs Cityscapes with Scribble4All automatically generated scribbles. These scribbles are not included in this repository. The experiment scripts do not all consume the raw Cityscapes layout directly. Prepare the paired, same-name PNG masks expected by the selected script, and check its label encoding before running it.
 
 ## Suggested local data layout
 
@@ -168,3 +180,4 @@ Open `demo/operator_overview.svg` in a browser or image viewer. It uses syntheti
 Cite the [VOC2012 challenge](https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2012/) and the [Cityscapes dataset](https://www.cityscapes-dataset.com/) when using them. Cityscapes has specific registration, use, and non-redistribution terms; consult the linked license directly. Dataset access and compliance are the user's responsibility.
 
 The included scripts are selected copies of research code. Workstation-specific path defaults were changed to environment-variable or relative-path settings; the perturbation logic was retained. The Cityscapes Fragmentation score settings treat train-ID 0 as a valid class and omit a synthetic background class. See `NOTICE.md` and `PROVENANCE.csv`. No open-source license has been assigned to the code in this repository. Public visibility alone does not grant permission to reuse, modify, or redistribute it. The repository does not grant rights to the datasets or third-party code.
+
