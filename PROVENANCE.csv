@@ -1,0 +1,9 @@
+source,destination,notes
+Noise_Generator/Noise_Generator_VOC2012/class/class_noise_idx.py,operators/voc2012/class_noise_idx.py,Local path defaults converted to environment variables
+Noise_Generator/Noise_Generator_VOC2012/direction/direction_noise.py,operators/voc2012/direction_noise.py,Local path defaults converted to environment variables
+Noise_Generator/Noise_Generator_VOC2012/offset/offset_noise.py,operators/voc2012/offset_noise.py,Local path defaults converted to environment variables
+Noise_Generator/Noise_Generator_VOC2012/coverage/shrink.py,operators/voc2012/shrink.py,Copied as experiment script
+Noise_Generator/Noise_Generator_Cityscapes/class/class_noise_idx.py,operators/cityscapes/class_noise_idx.py,Local path defaults converted to environment variables
+Noise_Generator/Noise_Generator_Cityscapes/direction/direction_noise.py,operators/cityscapes/direction_noise.py,Local path defaults converted to environment variables
+Noise_Generator/Noise_Generator_Cityscapes/offset/offset_noise.py,operators/cityscapes/offset_noise.py,Default data root changed to relative path
+Noise_Generator/Noise_Generator_Cityscapes/coverage/shrink.py,operators/cityscapes/shrink.py,Copied as experiment script
