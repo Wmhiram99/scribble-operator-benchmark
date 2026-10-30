@@ -7,3 +7,10 @@ Noise_Generator/Noise_Generator_Cityscapes/class/class_noise_idx.py,operators/ci
 Noise_Generator/Noise_Generator_Cityscapes/direction/direction_noise.py,operators/cityscapes/direction_noise.py,Local path defaults converted to environment variables
 Noise_Generator/Noise_Generator_Cityscapes/offset/offset_noise.py,operators/cityscapes/offset_noise.py,Default data root changed to relative path
 Noise_Generator/Noise_Generator_Cityscapes/coverage/shrink.py,operators/cityscapes/shrink.py,Copied as experiment script
+
+Noise_Generator/Noise_Generator_VOC2012/coverage/random_drop.py,operators/voc2012/random_drop.py,Copied as parameterized skeleton-point random retention operator
+Noise_Generator/Noise_Generator_Cityscapes/coverage/random_drop.py,operators/cityscapes/random_drop.py,Same source as VOC Random Drop; copied to retain dataset-specific folder organization
+Noise_Generator/Noise_Generator_VOC2012/fragment_noise/fluency_noise_17h.py,operators/voc2012/fragmentation_noise.py,Local paths and score-module lookup made repository-relative/environment-configurable
+Noise_Generator/Noise_Generator_VOC2012/fragment_noise/fluency_score_6.py,operators/voc2012/fragmentation_score.py,Local paths made environment-configurable
+Noise_Generator/Noise_Generator_Cityscapes/fragment_noise/fluency_noise_17h.py,operators/cityscapes/fragmentation_noise.py,Local paths and score-module lookup made repository-relative/environment-configurable
+Noise_Generator/Noise_Generator_Cityscapes/fragment_noise/fluency_score_6.py,operators/cityscapes/fragmentation_score.py,Local paths made environment-configurable; valid trainId 0 is treated as foreground and no background class is introduced

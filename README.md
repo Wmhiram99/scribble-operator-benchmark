@@ -1,10 +1,10 @@
 # Scribble Operator Benchmark
 
-A research code bundle for the Class, Offset, Direction, and Shrink scribble perturbation operators used with VOC2012 and Cityscapes.
+A research code bundle for the Class, Offset, Direction, Shrink, Random Drop, and Fragmentation scribble perturbation operators used with VOC2012 and Cityscapes.
 
 ## Repository contents
 
-- `operators/voc2012/` and `operators/cityscapes/` contain the dataset-specific operator scripts.
+- `operators/voc2012/` and `operators/cityscapes/` contain the dataset-specific operator scripts. Fragmentation has a generator (`fragmentation_noise.py`) and its matching score module (`fragmentation_score.py`), which should remain together in each dataset folder.
 - `demo/operator_overview.svg` is a synthetic conceptual illustration of the four operators. It is not a real sample or an experimental result.
 - `requirements.txt` lists Python dependencies.
 - `PROVENANCE.csv` maps each included script to its source path in the research workspace.
@@ -53,6 +53,7 @@ For scripts that read a flat directory, put one PNG per image directly in `GtMas
 - **VOC scribble canvases:** the blank canvas is commonly encoded as 255. This is an annotation-canvas convention and must not be confused with the meaning of 0 in the dense VOC ground truth.
 - **Cityscapes:** train IDs 0–18 are valid semantic classes and 255 is ignore. In this encoding, train ID 0 is `road`, not background. Raw label IDs use a different value space, where 0 denotes an unlabeled/void value. Do not mix label IDs and train IDs in one pair.
 - The Cityscapes Direction script includes a label-ID-to-train-ID mapping. Other scripts may assume already prepared index masks and do not necessarily perform that conversion. Inspect the selected script and verify the mask values before processing.
+- The Cityscapes Fragmentation scripts require single-channel train-ID masks with values 0–18 and ignore 255. The score treats all valid train IDs, including road (0), as foreground. This avoids inventing a semantic background class, but measures connectivity over the union of valid classes. Its score is not directly comparable to the VOC foreground/background score.
 - Palette, grayscale, RGB, and indexed masks are not interchangeable. Use the representation expected by the selected script. Ensure paired images have the same width and height and that every label value is valid for that dataset.
 
 ## Install dependencies
@@ -85,6 +86,10 @@ $env:VOC_SCRIBBLE_DIR = "D:\data\voc2012\auto_scribbles_idx"
 $env:VOC_CLASS_OUT_ROOT = "D:\results\voc2012\class"
 $env:VOC_DIRECTION_OUT_ROOT = "D:\results\voc2012\direction"
 $env:VOC_OFFSET_OUT_ROOT = "D:\results\voc2012\offset"
+$env:VOC_FRAGMENT_GT_DIR = "D:\data\voc2012\GtMask"
+$env:VOC_FRAGMENT_SCRIBBLE_DIR = "D:\data\voc2012\auto_scribbles_idx"
+$env:VOC_FRAGMENT_OUT_ROOT = "D:\results\voc2012\fragmentation"
+$env:VOC_FRAGMENT_SCORE_OUT_DIR = "D:\results\voc2012\fragmentation_score"
 
 $env:CITYSCAPES_GT_DIR = "D:\data\cityscapes\GtMask"
 $env:CITYSCAPES_SCRIBBLE_DIR = "D:\data\cityscapes\auto_scribbles_idx"
@@ -92,6 +97,10 @@ $env:CITYSCAPES_CLASS_OUT_ROOT = "D:\results\cityscapes\class"
 $env:CITYSCAPES_DIRECTION_OUT_ROOT = "D:\results\cityscapes\direction"
 $env:OFFSET_BASE_DIR = "D:\data\cityscapes"
 $env:OFFSET_OUT_ROOT = "D:\results\cityscapes\offset"
+$env:CITYSCAPES_FRAGMENT_GT_DIR = "D:\data\cityscapes\GtMask"
+$env:CITYSCAPES_FRAGMENT_SCRIBBLE_DIR = "D:\data\cityscapes\auto_scribbles_idx"
+$env:CITYSCAPES_FRAGMENT_OUT_ROOT = "D:\results\cityscapes\fragmentation"
+$env:CITYSCAPES_FRAGMENT_SCORE_OUT_DIR = "D:\results\cityscapes\fragmentation_score"
 ```
 
 `OFFSET_BASE_DIR` is shared by the two Offset scripts. Set it to the appropriate dataset root before running each one. The Offset scripts then expect `GtMask/` and `auto_scribbles_idx/` beneath that root.
@@ -108,16 +117,34 @@ export VOC_SCRIBBLE_DIR=/data/voc2012/auto_scribbles_idx
 
 ## Run an operator
 
-Run commands from the repository root after configuring the paths. Class, Direction, and Offset scripts run their configured dataset sweep when invoked. Shrink accepts input and output directories and exposes its options through `--help`.
+Run commands from the repository root after configuring the paths. Class, Direction, Offset, and Fragmentation scripts run their configured dataset sweep when invoked. Shrink and Random Drop accept input and output directories and expose their options through `--help`.
 
 ```bash
 python operators/voc2012/class_noise_idx.py
 python operators/voc2012/direction_noise.py
 python operators/voc2012/offset_noise.py
 python operators/voc2012/shrink.py --help
+python operators/voc2012/random_drop.py --help
+python operators/voc2012/fragmentation_noise.py
+python operators/voc2012/fragmentation_score.py
 ```
 
-For Cityscapes, substitute `cityscapes` for `voc2012` and set the Cityscapes variables above. Before launching a full sweep, inspect the script's ratio list, output path, and label assumptions. Outputs should be directed outside the repository.
+For Cityscapes, substitute `cityscapes` for `voc2012` and set the Cityscapes variables above. Fragmentation's score script is also used internally by its generator. The included Fragmentation generator currently defaults to `RATIOS = [0.1]`; edit that constant to run other levels. The standalone score script defaults to `LIMIT_N = 200`; set it to `None` to score every paired image. Before a full sweep, inspect the ratio list, image limit, output path, and label assumptions. Outputs should be directed outside the repository.
+
+Random Drop samples a seeded subset of skeleton points and optionally thickens those points within the original stroke support. It is not independent per-pixel dropout. Example for a single-channel VOC scribble mask with blank value 255:
+
+```bash
+python operators/voc2012/random_drop.py \
+  --in_dir /data/voc2012/auto_scribbles_idx \
+  --out_dir /results/voc2012/random_drop_keep05 \
+  --target_keep 0.5 \
+  --bg_val 255 \
+  --ignore_val 255 \
+  --seed 0 \
+  --keep_width
+```
+
+Adjust `--bg_val` and `--ignore_val` to the actual input encoding. For Cityscapes train-ID scribbles, preserve valid labels 0–18 and use 255 for the blank canvas.
 
 Example Shrink invocation for a mask directory whose blank canvas is 255:
 
@@ -140,5 +167,4 @@ Open `demo/operator_overview.svg` in a browser or image viewer. It uses syntheti
 
 Cite the [VOC2012 challenge](https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2012/) and the [Cityscapes dataset](https://www.cityscapes-dataset.com/) when using them. Cityscapes has specific registration, use, and non-redistribution terms; consult the linked license directly. Dataset access and compliance are the user's responsibility.
 
-The included scripts are selected copies of research code. Workstation-specific path defaults were changed to environment-variable or relative-path settings; the perturbation logic was retained. See `NOTICE.md` and `PROVENANCE.csv`. No open-source license has been assigned to the code in this repository. Public visibility alone does not grant permission to reuse, modify, or redistribute it. The repository does not grant rights to the datasets or third-party code.
-
+The included scripts are selected copies of research code. Workstation-specific path defaults were changed to environment-variable or relative-path settings; the perturbation logic was retained. The Cityscapes Fragmentation score settings treat train-ID 0 as a valid class and omit a synthetic background class. See `NOTICE.md` and `PROVENANCE.csv`. No open-source license has been assigned to the code in this repository. Public visibility alone does not grant permission to reuse, modify, or redistribute it. The repository does not grant rights to the datasets or third-party code.
