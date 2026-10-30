@@ -9,7 +9,7 @@ A research code bundle for the Class, Offset, Direction, and Shrink scribble per
 - `requirements.txt` lists Python dependencies.
 - `PROVENANCE.csv` maps each included script to its source path in the research workspace.
 
-This repository does not contain source images, ground-truth masks, scribble annotations, perturbed dataset outputs, predictions, model weights, experiment logs, or manuscript files.
+The intended shareable contents are code, documentation, and a synthetic demonstration. The repository does not contain source images, ground-truth masks, scribble annotations, perturbed dataset outputs, predictions, model weights, experiment logs, or manuscript files.
 
 ## Obtain the source datasets
 
@@ -21,7 +21,7 @@ The automatic scribble annotations used in the experiments are not part of the o
 
 ### Cityscapes
 
-Create an account and download the needed image and fine-annotation packages from the [official Cityscapes portal](https://www.cityscapes-dataset.com/downloads/). Access requires registration and approval. Read the [current Cityscapes terms](https://www.cityscapes-dataset.com/license/) before downloading or using the data. The terms prohibit redistribution of the dataset and modified versions. Do not place Cityscapes images, masks, scribbles, or recoverable derivatives in this repository, even if the repository is private, unless you have confirmed that the proposed sharing is permitted.
+Create an account and download the needed image and fine-annotation packages from the [official Cityscapes portal](https://www.cityscapes-dataset.com/downloads/). Access requires registration and approval. Read the [current Cityscapes terms](https://www.cityscapes-dataset.com/license/) before downloading or using the data. The terms prohibit redistribution of the dataset and modified versions. Do not place Cityscapes images, masks, scribbles, or recoverable derivatives in this repository or another shared location unless the proposed sharing is explicitly permitted.
 
 The official package uses nested city directories such as `leftImg8bit/train/<city>/` and `gtFine/train/<city>/`. The experiment scripts do not all consume this raw layout directly. Prepare the paired, same-name PNG masks expected by the selected script, and check its label encoding before running it.
 
@@ -140,5 +140,5 @@ Open `demo/operator_overview.svg` in a browser or image viewer. It uses syntheti
 
 Cite the [VOC2012 challenge](https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2012/) and the [Cityscapes dataset](https://www.cityscapes-dataset.com/) when using them. Cityscapes has specific registration, use, and non-redistribution terms; consult the linked license directly. Dataset access and compliance are the user's responsibility.
 
-The included scripts are selected copies of research code. Workstation-specific path defaults were changed to environment-variable or relative-path settings; the perturbation logic was retained. See `NOTICE.md` and `PROVENANCE.csv`. The repository itself does not grant rights to the datasets or third-party code.
+The included scripts are selected copies of research code. Workstation-specific path defaults were changed to environment-variable or relative-path settings; the perturbation logic was retained. See `NOTICE.md` and `PROVENANCE.csv`. No open-source license has been assigned to the code in this repository. Public visibility alone does not grant permission to reuse, modify, or redistribute it. The repository does not grant rights to the datasets or third-party code.
 
